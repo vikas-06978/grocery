@@ -41,7 +41,7 @@ class Transaction(db.Model):
     
     orders = db.relationship('Order', backref = 'transaction', lazy = True)
     
-class Orders(db.Model):
+class Order(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     transaction_id = db.Column(db.Integer, db.ForeignKey('transaction.id'), nullable = False)
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable = False)
