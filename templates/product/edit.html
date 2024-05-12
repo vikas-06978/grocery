@@ -1,31 +1,31 @@
 {% extends 'layout.html' %}
 
 {% block title %}
-    Add Product
+    Edit Product
 {% endblock %}
 
 {% block content %}
     <h1 class="display-1">
-        Add Product
+        Edit Product
     </h1>
 
     <!-- Fetch all the variables from Product table -->
-    <form action="{{url_for('add_product_post')}}" method="post" class="form">
+    <form action="{{url_for('edit_product_post', id = product.id)}}" method="post" class="form">
         <div class="form-group">
             <label for="name" class="form-label">Prodcut Name:</label>
-            <input type="text" name="name" id="name" class="form-control" required>
+            <input type="text" name="name" id="name" class="form-control" value="{{product.name}}" required>
         </div>
 
         <div class="form-group">
             <label for="price" class="form-label">Price:</label>
-            <input type="number" name="price" id="price" min="1" value="1" class="form-control" required>
+            <input type="number" name="price" id="price" min="1" value="{{product.price}}" class="form-control" required>
         </div>
 
         <div class="form-group">
             <label for="category_id" class="form-label">Category</label>
             <select name="category_id" id="category_id" class="form-control" required>
                 {% for cat in categories %}
-                {% if cat.id == category.id %}
+                {% if cat.id == product.category_id %}
                     <option selected value="{{cat.id}}"> {{cat.name}} </option>
                 {% else %}
                     <option  value="{{cat.id}}"> {{cat.name}} </option>
@@ -36,17 +36,17 @@
 
         <div class="form-group">
             <label for="quantity" class="form-label">Quantity:</label>
-            <input type="number" name="quantity" id="quantity" min="1" value="1" class="form-control" required>
+            <input type="number" name="quantity" id="quantity" min="1" value="{{product.quantity}}" class="form-control" required>
         </div>
 
         <div class="form-group">
             <label for="man_date" class="form-label">Manufacture Date</label>
-            <input type="date" name="man_date" id="man_date" value="{{now}}" class="form-control" required>
+            <input type="date" name="man_date" id="man_date" value="{{product.man_date}}" class="form-control" required>
         </div>
 
         <button type="submit" class="btn btn-success">
             <i class="fa fa-plus" ></i>
-            Add
+            Edit
         </button>
 
     </form>
