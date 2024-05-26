@@ -4,6 +4,9 @@ from models import db, User, Category, Product, Cart, Transaction, Order
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 from datetime import datetime
+import csv
+import os
+from uuid import uuid4
 
     
 @app.route('/login')
@@ -165,7 +168,9 @@ def logout():
 @admin_required
 def admin():
     categories = Category.query.all()
-    return render_template('admin.html', categories = categories)
+    category_names = [category.name for category in categories]
+    category_sizes = [len(category.products) for category in categories]
+    return render_template('admin.html', categories = categories,category_names=category_names, category_sizes=category_sizes )
     
     
 # --- Add category 
@@ -506,17 +511,22 @@ def orders():
     return render_template('orders.html', transactions=transactions)
 
 
-# @app.route('/export_csv')
-# @auth_required
-# def export_csv():
-#     transactions = Transaction.query.filter_by(user_id=session['user_id']).all()
-#     filename = uuid4().hex + '.csv'
-#     url = 'static/csv/' + filename
-#     with open(url, 'w', newline='') as file:
-#         writer = csv.writer(file)
-#         writer.writerow(['transaction_id', 'datetime', 'product_name', 'quantity', 'price'])
-#         for transaction in transactions:
-#             for order in transaction.orders:
-#                 writer.writerow([transaction.id, transaction.datetime, order.product.name, order.quantity, order.price])
-#     return redirect(url_for('static', filename='csv/'+filename))
+@app.route('/export_csv')
+@auth_required
+def export_csv():
+    transactions = Transaction.query.filter_by(user_id=session['user_id']).all()
+    filename = uuid4().hex + '.csv'
+    directory = 'static/csv'
+    url = os.path.join(directory, filename)
+     # Create directory if it doesn't exist
+
+    # url = 'static/csv/' + filename
+    os.makedirs(directory, exist_ok=True)
+    with open(url, 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(['transaction_id', 'datetime', 'product_name', 'quantity', 'price'])
+        for transaction in transactions:
+            for order in transaction.orders:
+                writer.writerow([transaction.id, transaction.datetime, order.product.name, order.quantity, order.price])
+    return redirect(url_for('static', filename='csv/'+filename))
     
